@@ -15,10 +15,12 @@ def image_preprocess(image_path):
     x = preprocess_input(x)
     return x
 
+
 # Function to encode a given image into a vector of size (2048, )
-def encode(base_model, image):
-    image = image_preprocess(image)  # preprocess the image
-    fea_vec = base_model.predict(image)  # Get the encoding vector for the image
+def encode(base_model, input_image):
+    input_image = image_preprocess(input_image)  # preprocess the image
+    fea_vec = base_model.predict(
+        input_image)  # Get the encoding vector for the image
     fea_vec = np.reshape(
         fea_vec, fea_vec.shape[1])  # reshape from (1, 2048) to (2048, )
     return fea_vec
