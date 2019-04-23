@@ -50,6 +50,9 @@ for w in vocab:
     ixtoword[ix] = w
     ix += 1
 
+with open("data/captioning/pickle/vocab.pkl", "wb") as f:
+    pickle.dump(vocab, f)
+
 vocab_size = len(ixtoword) + 1  # one for appended 0's
 print("vocab size:, ", vocab_size)
 
@@ -102,4 +105,5 @@ for i in range(epochs):
                                max_length=max_length, num_photos_per_batch=number_pics_per_bath)
     model.fit_generator(generator, epochs=1, steps_per_epoch=steps, verbose=1)
     model.save('models/model_' + str(i + 21) + '.h5')
-model.save_weights('models/model_30.h5')
+
+model.save_weights('models/model_final_weights.h5')

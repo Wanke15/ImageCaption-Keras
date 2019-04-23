@@ -1,6 +1,6 @@
 import numpy as np
 
-from tensorflow._api.v1.keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 from tensorflow.python.keras.applications.inception_v3 import preprocess_input
 
 

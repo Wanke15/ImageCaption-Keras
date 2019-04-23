@@ -4,12 +4,15 @@ import string
 import os
 
 import numpy as np
-from tensorflow.keras.layers import add
+from tensorflow.keras.layers import add, Concatenate
 
-from tensorflow.python.keras import Input, Model
-from tensorflow.python.keras.layers import Dropout, Dense, Embedding, LSTM
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
-from tensorflow.python.keras.utils import to_categorical
+from tensorflow.keras.preprocessing import image
+from tensorflow.python.keras.applications.inception_v3 import preprocess_input
+
+from tensorflow.keras import Input, Model
+from tensorflow.python.keras.layers import Dropout, Dense, Embedding, LSTM, merge, CuDNNLSTM
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
 from tqdm import tqdm
 
 
@@ -203,12 +206,17 @@ def build_model(input_dim, max_length, vocab_size, embedding_dim,
     inputs1 = Input(shape=(input_dim, ))
     fe1 = Dropout(0.5)(inputs1)
     fe2 = Dense(256, activation='relu')(fe1)
+
     inputs2 = Input(shape=(max_length, ))
-    se1 = Embedding(vocab_size, embedding_dim, mask_zero=True)(inputs2)
+    se1 = Embedding(vocab_size, embedding_dim, mask_zero=False)(inputs2)
     se2 = Dropout(0.5)(se1)
     se3 = LSTM(256)(se2)
+
+    # decoder1 = Concatenate()([fe2, se3])
     decoder1 = add([fe2, se3])
     decoder2 = Dense(256, activation='relu')(decoder1)
+    # attention_probs = Dense(256, activation='softmax', name='attention_probs')(decoder2)
+    # attention_mul = merge.Multiply()([decoder1, attention_probs])
     outputs = Dense(vocab_size, activation='softmax')(decoder2)
     model = Model(inputs=[inputs1, inputs2], outputs=outputs)
 
